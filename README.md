@@ -7,8 +7,14 @@ logger for mbed os.
     #include <mbed.h>
     #include <mlogger/logger.h>
 
-    Serial serial(TX, RX);
-    mlogger::Logger log(&serial);
+    mlogger::Logger log; // log to stdout
+
+    // or log to FILE
+    // see mbed: FILE *fdopen(FileHandle *fh, const char *mode)
+    // 
+    // UARTSerial serial2(TX2, RX2, 115200);
+    // auto file = fdopen(serial2, "w+");
+    // mlogger::Logger log(file); 
 
     int main()
     {

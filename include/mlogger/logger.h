@@ -30,7 +30,7 @@
 // set log suffix, comment this line to remove newline
 #define MLOGGER_SUFFIX "\n"
 
-#include <Stream.h>
+#include <platform/PlatformMutex.h>
 
 namespace mlogger
 {
@@ -38,8 +38,8 @@ namespace mlogger
 class Logger
 {
 public:
-    // logs to stream
-    Logger(mbed::Stream *stream);
+    // logs to file descriptor
+    Logger(void *fd = nullptr);
     // V: Verbose
     // Logs everything including system secrets messages, never for production use.
     // e.g., at file xxx/xxx.cpp line 100
@@ -74,60 +74,106 @@ public:
     // e.g., hardware crash, data crash and unrecoverable...
     int F(const char *format, ...);
 
+    static constexpr bool LevelV();
+    static constexpr bool LevelD();
+    static constexpr bool LevelI();
+    static constexpr bool LevelW();
+    static constexpr bool LevelE();
+    static constexpr bool LevelC();
+    static constexpr bool LevelF();
+
 private:
-#if ((LOGLEVEL+0) < MLOGGER_LOGLEVEL_N)
-    mbed::Stream *mStream;
+#ifndef LOGLEVEL
+#define LOGLEVEL
+#endif
+#if ((LOGLEVEL + 0) < MLOGGER_LOGLEVEL_N)
+    void *mFile;
     PlatformMutex mMutex;
 #endif
 };
 
-#if !((LOGLEVEL+0) < MLOGGER_LOGLEVEL_N)
-inline Logger(mbed::Stream *stream)
+#if !((LOGLEVEL + 0) < MLOGGER_LOGLEVEL_N)
+inline Logger::Logger(void *fd)
 {
 }
 #endif
-#if ((LOGLEVEL+0) > MLOGGER_LOGLEVEL_V)
+#if ((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_V)
 inline int Logger::V(const char *format, ...)
 {
     return 0;
 }
 #endif
-#if ((LOGLEVEL+0) > MLOGGER_LOGLEVEL_D)
+#if ((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_D)
 inline int Logger::D(const char *format, ...)
 {
     return 0;
 }
 #endif
-#if ((LOGLEVEL+0) > MLOGGER_LOGLEVEL_I)
+#if ((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_I)
 inline int Logger::I(const char *format, ...)
 {
     return 0;
 }
 #endif
-#if ((LOGLEVEL+0) > MLOGGER_LOGLEVEL_W)
+#if ((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_W)
 inline int Logger::W(const char *format, ...)
 {
     return 0;
 }
 #endif
-#if ((LOGLEVEL+0) > MLOGGER_LOGLEVEL_E)
+#if ((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_E)
 inline int Logger::E(const char *format, ...)
 {
     return 0;
 }
 #endif
-#if ((LOGLEVEL+0) > MLOGGER_LOGLEVEL_C)
+#if ((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_C)
 inline int Logger::C(const char *format, ...)
 {
     return 0;
 }
 #endif
-#if ((LOGLEVEL+0) > MLOGGER_LOGLEVEL_F)
+#if ((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_F)
 inline int Logger::F(const char *format, ...)
 {
     return 0;
 }
 #endif
+
+inline constexpr bool Logger::LevelV()
+{
+    return !((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_V);
+}
+
+inline constexpr bool Logger::LevelD()
+{
+    return !((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_D);
+}
+
+inline constexpr bool Logger::LevelI()
+{
+    return !((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_I);
+}
+
+inline constexpr bool Logger::LevelW()
+{
+    return !((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_W);
+}
+
+inline constexpr bool Logger::LevelE()
+{
+    return !((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_E);
+}
+
+inline constexpr bool Logger::LevelC()
+{
+    return !((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_C);
+}
+
+inline constexpr bool Logger::LevelF()
+{
+    return !((LOGLEVEL + 0) > MLOGGER_LOGLEVEL_F);
+}
 
 } // namespace mlogger
 
